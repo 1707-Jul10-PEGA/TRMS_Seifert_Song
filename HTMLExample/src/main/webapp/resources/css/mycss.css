@@ -1,0 +1,31 @@
+body {
+	background-color: pink;
+}
+h1 {
+	color: red;
+	background-color: blue;
+}
+p{
+	color: yellow;
+	background-color: purple;
+}
+
+li {
+	font-family:cursive;
+}
+
+.class1 {
+	background-color: white;
+}
+
+.class {
+	background-color: white;
+}
+
+#l2 {
+	color:white;
+}
+
+#l2{
+	color:dark-grey;
+}
