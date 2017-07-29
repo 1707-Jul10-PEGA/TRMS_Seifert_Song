@@ -1,0 +1,78 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	background-color: orange;
+}
+
+.error {
+	color: red;
+		
+}
+
+div.trmsBlock {
+	background-color: darkorange;
+    color: white;
+    margin: 180px 120px 120px 120px;
+    padding: 20px;
+    text-align: center;
+    vertical-align: center;
+    height: 310px;
+	border: 3px solid peru;
+
+    font-family:helvetica;
+}
+
+div.test {
+	
+}
+
+input {
+	float: right;
+	clear: right;
+	margin: 0 40% 10px 0;
+	
+	background-color: orange;
+	border-radius: 15px;
+	text-align: center;
+}
+
+label {
+	float: left;
+	clear: left;
+	margin: 0 0 10px 35%;
+}
+
+.centeredButton{
+	background-color: orange;
+	border: peru;
+	border-radius: 15px;
+	font-size: 16px;
+	padding: 15px 25px;
+	margin: auto;
+	width: 150px;
+}
+
+.centeredButton span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.centeredButton span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.centeredButton:hover span {
+  padding-right: 25px;
+}
+
+.centeredButton:hover span:after {
+  opacity: 1;
+  right: 0;
+}
