@@ -3,19 +3,26 @@ package com.MSTS.TRMS_Project1.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.MSTS.TRMS_Project1;
+import com.MSTS.TRMS_Project1.*;
 
-public class TRMS_EmployeeDAO {
+public interface TRMS_EmployeeDAO {
 
 	
-	Employee getEmployee(int id) throws SQLException;
-	
+	Employee getEmployee(String username) throws SQLException;
 	int saveEmployee(Employee em) throws SQLException;
-	
 	void updateEmployee(Employee em) throws SQLException;
 	
-	List<Employee> getAllEmployees() throws SQLException;
 	
-	int deleteEmployee(int ... ids) throws SQLException;
+	Application getApplication(int id) throws SQLException;
+	int saveApplication(Application ap) throws SQLException;
+	void updateApplication(Application ap) throws SQLException;
+	List<Application> getAllApplications() throws SQLException;
+	int deleteApplication(int id) throws SQLException;
 	
+	
+	Event getEvent(int id) throws SQLException;
+	int saveEvent(Event ev) throws SQLException;
+	
+	List<Attachment> getAttachment(int id) throws SQLException;
+	int saveAttachment(Attachment at) throws SQLException;
 }
