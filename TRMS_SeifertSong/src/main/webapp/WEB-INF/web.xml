@@ -10,6 +10,7 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
+<<<<<<< HEAD
     <servlet-name>Hello</servlet-name>
     <servlet-class>com.MSTS.util.MyServlet</servlet-class>
   </servlet>
@@ -36,5 +37,15 @@
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/LoginServlet</url-pattern>
+=======
+    <description></description>
+    <display-name>testServlet</display-name>
+    <servlet-name>testServlet</servlet-name>
+    <servlet-class>com.MSTS.TRMS_Project1.servlet.testServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>testServlet</servlet-name>
+    <url-pattern>/exampleServlet</url-pattern>
+>>>>>>> b93289710fdeb39967c2513ef8377c1eb56c959f
   </servlet-mapping>
 </web-app>
