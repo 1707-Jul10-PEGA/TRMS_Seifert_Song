@@ -34,12 +34,12 @@ public class ConnectionFactory {
 		Properties prop = new Properties();
 
 		try {
-			prop.load(new FileReader("datasource.properties"));
-			System.out.println(prop);
+			prop.load(new FileReader("C:/Users/Matthew Seifert/Documents/workspace-sts-3.8.4.RELEASE/TRMS_SeifertSong/datasource.properties"));
+			//System.out.println(prop);
+			Class.forName ("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection(
 					prop.getProperty("url"), prop.getProperty("user"), prop.getProperty("password"));
-		} catch (SQLException | IOException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		

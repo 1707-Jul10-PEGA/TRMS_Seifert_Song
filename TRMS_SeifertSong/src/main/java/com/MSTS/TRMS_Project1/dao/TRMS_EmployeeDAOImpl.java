@@ -33,40 +33,58 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 	@Override
 	public Employee getEmployee(String username) throws SQLException{
 		
-		Connection conn = null;
 		Statement stmt;
 		ResultSet rs = null;
-		
-		String sql = "SELECT * FROM TRMS_EMPLOYEES WHERE USERNAME="+username;
+		int nullflag = 0;
+		String sql = "SELECT * FROM TRMS_EMPLOYEES WHERE USERNAME='"+username.toUpperCase() + "'";
 		Employee em = new Employee();
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			while(rs.next())
-			{
+			while(rs.next()){
 				em.setE_ID(rs.getInt(1));
 				em.setEmployeeUsername(rs.getString(2));
 				em.setDepartment(rs.getString(3));
 				em.setDS_ID(rs.getInt(4));
 				em.setDH_ID(rs.getInt(5));
+				nullflag = 1;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		sql = "SELECT * FROM TRMS_PASSWORDS WHERE USERNAME="+username;
+		em.setPassword(this.getPassword(username.toUpperCase()));
+		if(nullflag==0)
+		{
+			em.setEmployeeUsername("ERROR");
+		}
+		return em;
+		
+	}
+	
+	public String getPassword(String username)
+	{
+		Statement stmt;
+		ResultSet rs = null;
+		String pw = null;
+		
+		String sql = "SELECT * FROM TRMS_PASSWORDS";
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			while(rs.next())
-			{
-				em.setPassword(rs.getString(2));
+			while(rs.next()){
+
+				if(username.equals(rs.getString("USERNAME")))
+					pw = rs.getString(2);
+				//System.out.println(pw);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		if("".equals(pw))
+			return "Error";
+		else
+			return pw;
 		
-		return em;
 	}
 
 	@Override
@@ -111,7 +129,6 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 
 	@Override
 	public Application getApplication(int id) throws SQLException {
-		Connection conn = null;
 		Statement stmt;
 		ResultSet rs = null;
 		
@@ -120,7 +137,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		conn = ConnectionFactory.getInstance().getConnection();
 		String sql;
 		sql = "SELECT * FROM TRMS_APPLICATIONS LEFT JOIN TRMS_EMPLOYEES ON "
-				+ "TRMS_APPLICATIONS.E_ID = TRMS_EMPLOYEES.E_ID WHERE APP_ID=" + id;
+				+ "TRMS_APPLICATIONS.E_ID = TRMS_EMPLOYEES.E_ID WHERE APP_ID='" + id + "'";
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -153,7 +170,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 	public int saveApplication(Application ap) throws SQLException {
 		conn.setAutoCommit(false);
 		String sql = "INSERT INTO TRMS_APPLICATIONS(APP_ID, E_ID, BC_ID, DEPARTMENT, DS_APPROVAL,"
-				+ "DH_APPROVAL, BENCO_APPROVAL, EVENT_ID, RESPONSE_REQ_ID, RESPONSE_REQ, STATUS, GRADE, AWARD)"
+				+ "DH_APPROVAL, BENCO_APPROVAL, EVENT_ID, RESPONSE_REQ_ID, RESPONSE_REQ, STATUS, FINAL_GRADE, AWARD)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, ap.getApp_ID());
@@ -184,7 +201,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		conn.setAutoCommit(false);
 		String sql = "UPDATE TRMS_APPLICATIONS SET APP_ID=?, E_ID=?, BC_ID=?, DEPARTMENT=?,"
 				+ "DS_APPROVAL=?, DH_APPROVAL=?, BENCO_APPROVAL=?, EVENT_ID=?, "
-				+ "RESPONSE_REQ_ID=?, RESPONSE_REQ=?, STATUS=?, GRADE=?, AWARD=?";
+				+ "RESPONSE_REQ_ID=?, RESPONSE_REQ=?, STATUS=?, FINAL_GRADE=?, AWARD=? WHERE APP_ID=?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, ap.getApp_ID());
 		pstmt.setInt(2, ap.getE_ID());
@@ -199,6 +216,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		pstmt.setString(11, ap.getStatus());
 		pstmt.setString(12, ap.getGrade());
 		pstmt.setInt(13, ap.getAward());
+		pstmt.setInt(14, ap.getApp_ID());
 
 		pstmt.executeUpdate();
 		
@@ -211,7 +229,6 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 
 	@Override
 	public ArrayList<Application> getAllApplications() throws SQLException {
-		Connection conn = null;
 		Statement stmt;
 		ResultSet rs = null;
 		
@@ -267,10 +284,25 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		
 		return 0;
 	}
+	public int remakeApplication(int id) throws SQLException {
+		conn.setAutoCommit(false);
+		String sql = "UPDATE TRMS_APPLICATIONS SET STATUS=? WHERE APP_ID=?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+
+		pstmt.setString(1, "active");
+		pstmt.setInt(2, id);
+
+		pstmt.executeUpdate();
+		
+		conn.commit();
+		
+		conn.setAutoCommit(true);
+		
+		return 0;
+	}
 
 	@Override
 	public Event getEvent(int id) throws SQLException {
-		Connection conn = null;
 		Statement stmt;
 		ResultSet rs = null;
 		
@@ -278,7 +310,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		Event ev = new Event();
 		conn = ConnectionFactory.getInstance().getConnection();
 		String sql;
-		sql = "SELECT * FROM TRMS_EVENTS WHERE EVENT_ID=" + id;
+		sql = "SELECT * FROM TRMS_EVENTS WHERE EVENT_ID='" + id + "'";
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -328,7 +360,6 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 
 	@Override
 	public List<Attachment> getAttachment(int id) throws SQLException {
-		Connection conn = null;
 		Statement stmt;
 		ResultSet rs = null;
 		
@@ -337,7 +368,7 @@ public class TRMS_EmployeeDAOImpl implements TRMS_EmployeeDAO {
 		Attachment at = new Attachment();
 		conn = ConnectionFactory.getInstance().getConnection();
 		String sql;
-		sql = "SELECT * FROM TRMS_ATTACHMENTS WHERE APP_ID=" + id;
+		sql = "SELECT * FROM TRMS_ATTACHMENTS WHERE APP_ID='" + id + "'";
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);

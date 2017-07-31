@@ -16,8 +16,10 @@ public class Employee {
 	
 	
 	
-	public void approve(int id)
+	public int approve(int id)
 	{
+		//retval starts at 0, increments for EACH approval gained. Max is 2 (as both DS and DH)
+		int retval = 0;
 		//Approves an application
 		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
 		Application approved;
@@ -28,25 +30,31 @@ public class Employee {
 		{
 			approved.BenCo_approval = 1;
 			System.out.println("You have approved this as a BenCo");
+			retval++;
 		}
 		if(this.E_ID == approved.DH_ID)
 		{
 			approved.DH_approval = 1;
 			System.out.println("You have approved this as a DH");
+			retval++;
 		}
 		if(this.E_ID == approved.DS_ID)
 		{
 			approved.DS_approval = 1;
 			System.out.println("You have approved this as a DS");
+			retval++;
 		}
 		dao.updateApplication(approved);
 		//Log application approved
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return retval;
 	}
-	public void reject(int id, String reason)
+	public int reject(int id, String reason)
 	{
+		//retval starts at 0, turns to 1 if the application is rejected.
+		int retval = 0;
 		//Rejects an application
 		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
 		Application rejected;
@@ -57,11 +65,13 @@ public class Employee {
 		{
 			rejected.BenCo_approval = 2;
 			System.out.println("You have rejected this as a BenCo");
+			retval = 1;
 		}
 		if(this.E_ID == rejected.DH_ID)
 		{
 			rejected.DH_approval = 2;
 			System.out.println("You have rejected this as a DH");
+			retval = 1;
 		}
 		if(this.E_ID == rejected.DS_ID)
 		{
@@ -69,11 +79,13 @@ public class Employee {
 			System.out.println("You have rejected this as a DS");
 			System.out.println("Your supplied reason is: ");
 			System.out.println(reason);
+			retval = 1;
 		}
 		dao.updateApplication(rejected);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return retval;
 	}
 	public void clarify(int Appid, int reqID, String reqInfo)
 	{
@@ -90,6 +102,8 @@ public class Employee {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Attention to employee ID# " + reqID);
+		System.out.println("Required action: " + reqInfo);
 	}
 	public void cancel(int id)
 	{
@@ -108,7 +122,7 @@ public class Employee {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		System.out.println("Application "+id+" deleted!");
 	}
 	public void apply(Application newApp)
 	{
@@ -116,7 +130,14 @@ public class Employee {
 		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
 		try {
 			dao.saveApplication(newApp);
+			
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			dao.remakeApplication(newApp.App_ID);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -146,11 +167,13 @@ public class Employee {
 	{
 		//Views the status of an application, given application id
 		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
+		Application app = new Application();
 		try {
-			dao.getApplication(App_ID);
+			app = dao.getApplication(App_ID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(app);
 	}
 	public int autoApprove(Application app, int approvetimer)
 	{
@@ -171,29 +194,34 @@ public class Employee {
 		//Login to a user account
 		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
 		Employee em = new Employee();
+		//System.out.println(username + "=====" + pw);
 		try {
 			em = dao.getEmployee(username);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if(em.EmployeeUsername == username)
+		System.out.println(em.toString());
+		if(em.EmployeeUsername.toLowerCase().equals(username.toLowerCase()))
 		{
 			//Username matched!!!
-			if(em.password == pw)
+			if(em.password.toLowerCase().equals(pw.toLowerCase()))
 			{
-				//Password matched!!!
+				//Password matched!!!	
 				//Allowed to access functions
+				System.out.println("Pass matched");
 				return em;
 			}
 			else
 			{
 				//Password did not match!
+				System.out.println("Pass no match");
 				return null;
 			}
 		}
 		else
 		{
 			//User does not exist!
+			System.out.println("User no exist");
 			return null;
 		}
 		
@@ -235,6 +263,11 @@ public class Employee {
 		return al;
 	}
 	
+	@Override
+	public String toString() {
+		return "Employee [E_ID=" + E_ID + ", EmployeeUsername=" + EmployeeUsername + ", Department=" + Department
+				+ ", DS_ID=" + DS_ID + ", DH_ID=" + DH_ID + ", password=" + password + "]";
+	}
 	public void logout()
 	{
 		//Logout of a user account
@@ -250,6 +283,19 @@ public class Employee {
 			e.printStackTrace();
 		}
 	}
+	
+	public void newEvent(Event ev)
+	{
+		TRMS_EmployeeDAO dao = new TRMS_EmployeeDAOImpl();
+		try {
+			dao.saveEvent(ev);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Event: " + ev.toString() + " saved!");
+	}
+	
 	public int getE_ID() {
 		return E_ID;
 	}

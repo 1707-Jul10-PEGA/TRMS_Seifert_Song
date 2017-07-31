@@ -66,6 +66,12 @@ public class Event {
 	public void setJustification(String justification) {
 		Justification = justification;
 	}
+	@Override
+	public String toString() {
+		return "Event [Event_ID=" + Event_ID + ", Date=" + Date + ", Location=" + Location + ", Description="
+				+ Description + ", Cost=" + Cost + ", Grading_Format=" + Grading_Format + ", Passing_Grade="
+				+ Passing_Grade + ", Event_Type=" + Event_Type + ", Justification=" + Justification + "]";
+	}
 	
 	
 }

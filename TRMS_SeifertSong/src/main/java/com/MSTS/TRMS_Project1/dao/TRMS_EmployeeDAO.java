@@ -18,6 +18,7 @@ public interface TRMS_EmployeeDAO {
 	void updateApplication(Application ap) throws SQLException;
 	List<Application> getAllApplications() throws SQLException;
 	int deleteApplication(int id) throws SQLException;
+	int remakeApplication(int id) throws SQLException;
 	
 	
 	Event getEvent(int id) throws SQLException;
